@@ -1,0 +1,6 @@
+---
+- name: Set authorized key from file for user ansible.
+  authorized_key:
+    user: ansible
+    state: present
+    key: "{{ lookup('file', '/home/ansible/.ssh/id_rsa.pub') }}"
