@@ -1,6 +1,6 @@
 ---
-- name: Set authorized key from file for user ansible.
+- name: Set authorized key from file for user devops.
   authorized_key:
     user: ansible
     state: present
-    key: "{{ lookup('file', '/home/ansible/.ssh/id_rsa.pub') }}"
+    key: "{{ lookup('file', '/home/devops/.ssh/id_rsa.pub') }}"
