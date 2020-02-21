@@ -1,0 +1,6 @@
+---
+- name: Add ssh key
+  hosts: web
+  gather_facts: False
+  roles:
+    - add_ssh_key
