@@ -1,0 +1,7 @@
+---
+# tasks file for include_tasks
+- name: Include user tasks
+  include_tasks: "{{ item }}"
+  loop: 
+     - add_user.yml
+     - remove_user.yml

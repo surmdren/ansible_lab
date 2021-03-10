@@ -1,0 +1,6 @@
+---
+- name: Delegate_to module test 
+  hosts: web
+  gather_facts: True 
+  roles:
+    - delegate_to

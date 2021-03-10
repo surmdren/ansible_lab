@@ -1,0 +1,16 @@
+---
+- name: Create file
+  file:
+    dest: /tmp/delegate.txt
+    state: touch
+  delegate_to: localhost
+- name: Debug output
+  debug: 
+    msg: "{{ ansible_hostname }}"
+
+- name: Storing logs
+  lineinfile:
+    line: "{{ ansible_hostname }}"
+    path: /tmp/delegate.txt
+  delegate_to: localhost
+  become: false
