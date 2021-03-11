@@ -1,0 +1,5 @@
+---
+- name: Create test user
+  user:
+    name: test
+    state: absent 

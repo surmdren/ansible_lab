@@ -1,0 +1,16 @@
+---
+# tasks file for local_action
+- name: local_action test
+  shell: hostname 
+  register: output
+
+- name: Debug output
+  debug: 
+    msg: "{{ output.stdout }}"
+
+- name: Storing logs
+  copy:
+    content={{output.stdout}}
+    dest="{{token_file}}"
+  delegate_to: localhost
+  become: false
