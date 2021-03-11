@@ -1,0 +1,36 @@
+---
+# tasks file for centos_update
+- name: Check the repolist
+  shell: yum repolist
+  become: yes
+  register: output_yum
+
+- name: Check the package list
+  yum: 
+    list: installed
+    disablerepo: "*"
+    enablerepo: PwC_CentOS_7_Base,PwC_CentOS_7_Extras,PwC_CentOS_7_Updates,PwC_Foreman_1_22_Foreman_Client,PwC_Foreman_2_1_Foreman_Client,PwC_EPEL_7_EPEL
+  become: yes
+  register: output_installed_packages
+
+- name: Create the yum_record file
+  shell: cat /dev/null > /tmp/yum_record.txt
+    
+- name: Print repolist
+  blockinfile:
+    content: "{{ item }}"
+    path: /tmp/yum_record.txt
+  with_items: 
+    - "{{ output_yum.stdout }}"
+    - "{{ output_installed_packages }}"
+
+- name: Create localhost directory to store the record file
+  file:
+    path: ~/yum_record/
+    state: directory
+  delegate_to: localhost
+
+- name: Fetch the yum_record file
+  fetch: 
+    src: /tmp/yum_record.txt
+    dest: ~/yum_record/yum_record_{{ ansible_date_time.iso8601 }}

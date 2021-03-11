@@ -1,0 +1,13 @@
+###################################################################
+#Playbook Name  : centos_update                                                                                              
+#Description    : Playbook for the centos 7 patch cycle                                                                           
+#Args           :                                                                                           
+#Author         : Madong M Ren                            
+#Email          : madong.m.ren@cn.pwc.com                                       
+###################################################################
+---
+- name: centos_update
+  hosts: patch  #Input your hosts
+  gather_facts: True
+  roles:
+    - centos_update
