@@ -7,7 +7,7 @@
 ###################################################################
 ---
 - name: centos_update
-  hosts: patch  #Input your hosts
+  hosts: web  #Input your hosts
   gather_facts: True
   roles:
     - centos_update

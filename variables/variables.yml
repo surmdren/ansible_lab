@@ -1,0 +1,7 @@
+---
+- name: Variables test 
+  hosts: web 
+  gather_facts: False
+  become: yes
+  roles:
+    - variables 

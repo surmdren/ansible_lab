@@ -5,24 +5,30 @@
   become: yes
   register: output_yum
 
-- name: Check the package list
+- name: Gather the package facts
+  package_facts:
+    manager: auto
+
+- name: Check the package update list
   yum: 
-    list: installed
+    list: updates
     disablerepo: "*"
-    enablerepo: PwC_CentOS_7_Base,PwC_CentOS_7_Extras,PwC_CentOS_7_Updates,PwC_Foreman_1_22_Foreman_Client,PwC_Foreman_2_1_Foreman_Client,PwC_EPEL_7_EPEL
+    enablerepo: base
   become: yes
-  register: output_installed_packages
+  register: output_udpate_packages
 
 - name: Create the yum_record file
   shell: cat /dev/null > /tmp/yum_record.txt
     
 - name: Print repolist
   blockinfile:
+    marker: "## added by ansible"
     content: "{{ item }}"
     path: /tmp/yum_record.txt
   with_items: 
     - "{{ output_yum.stdout }}"
-    - "{{ output_installed_packages }}"
+    - "{{ ansible_facts.packages }}"
+    - "{{ output_udpate_packages }}"
 
 - name: Create localhost directory to store the record file
   file:
@@ -33,4 +39,5 @@
 - name: Fetch the yum_record file
   fetch: 
     src: /tmp/yum_record.txt
-    dest: ~/yum_record/yum_record_{{ ansible_date_time.iso8601 }}
+    dest: ~/yum_record/yum_record_{{ ansible_date_time.date }}
+

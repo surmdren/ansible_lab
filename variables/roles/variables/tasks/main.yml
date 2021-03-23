@@ -1,0 +1,5 @@
+---
+# tasks file for variables
+- name: Print the variables
+  debug:
+    msg: "{{ var2 }}"
