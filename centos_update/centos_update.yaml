@@ -7,7 +7,9 @@
 ###################################################################
 ---
 - name: centos_update
-  hosts: web  #Input your hosts
+  hosts: 192.168.50.100 #Input your hosts
   gather_facts: True
   roles:
     - centos_update
+  vars_files:
+    - packages_vars.yaml

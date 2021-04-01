@@ -1,7 +1,8 @@
 ---
 # tasks file for centos_update
 - name: Check the repolist
-  shell: yum repolist
+  yum:
+    list: repos 
   become: yes
   register: output_yum
 
@@ -11,24 +12,24 @@
 
 - name: Check the package update list
   yum: 
-    list: updates
+    list: updates 
     disablerepo: "*"
-    enablerepo: base
+    enablerepo: PwC_CentOS_7_Base,PwC_CentOS_7_Extras,PwC_CentOS_7_Updates,PwC_Foreman_1_22_Foreman_Client,PwC_Foreman_2_1_Foreman_Client,PwC_EPEL_7_EPEL
   become: yes
-  register: output_udpate_packages
+  register: output_update_packages
 
 - name: Create the yum_record file
   shell: cat /dev/null > /tmp/yum_record.txt
     
-- name: Print repolist
+- name: Print repolist and packages that need to be updated.
   blockinfile:
     marker: "## added by ansible"
     content: "{{ item }}"
     path: /tmp/yum_record.txt
   with_items: 
-    - "{{ output_yum.stdout }}"
+    - "{{ output_yum }}"
     - "{{ ansible_facts.packages }}"
-    - "{{ output_udpate_packages }}"
+    - "{{ output_update_packages }}"
 
 - name: Create localhost directory to store the record file
   file:
@@ -39,5 +40,27 @@
 - name: Fetch the yum_record file
   fetch: 
     src: /tmp/yum_record.txt
-    dest: ~/yum_record/yum_record_{{ ansible_date_time.date }}
+    dest: ~/yum_record/{{ ansible_date_time.date }}_{{ inventory_hostname }}/
+    flat: yes
 
+- name: Print the packages that needs to be updated.
+  debug:
+    msg: "The packages {{ item }} will be updated"
+  with_items:
+    - "{{ packages }}"
+
+- name: install updates using yum
+  yum:
+    name: "{{ packages }}"
+    state: latest
+  become: yes
+
+- name: check if reboot is required
+  shell: needs-restarting -r
+  failed_when: false
+  register: reboot_required
+  changed_when: false
+
+- name: Print if reboot required
+  debug:
+    msg: "{{ reboot_required }}"
